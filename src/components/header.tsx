@@ -25,7 +25,7 @@ export default function Header() {
       className="container sticky top-0 z-50 h-16 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
     >
       <nav className="flex h-16 w-full items-center justify-between">
-        <div className="">logo</div>
+        <div className="text-black">PH</div>
         <div className="gap-4">
           {/* <ModeToggle /> */}
           {session ? (

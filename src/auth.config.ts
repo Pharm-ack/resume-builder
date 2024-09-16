@@ -4,7 +4,7 @@ import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import credentials from "next-auth/providers/credentials";
 import { NextAuthConfig } from "next-auth";
-import prisma from "./lib/db";
+import { getUserByEmail } from "./lib/user";
 
 export default {
   providers: [
@@ -34,9 +34,7 @@ export default {
 
         const { email, password } = result.data;
 
-        const user = await prisma.user.findUnique({
-          where: { email },
-        });
+        const user = await getUserByEmail(email);
 
         if (!user || !user.password) {
           return null;
