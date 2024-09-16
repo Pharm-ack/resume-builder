@@ -1,16 +1,14 @@
+import { auth } from "@/auth";
 import AddResume from "@/components/add-resume";
 import ResumeCard from "@/components/resume-card";
 import prisma from "@/lib/db";
 import { Resume } from "@/types/types";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 export default async function page() {
-  const { getUser } = getKindeServerSession();
-
-  const user = await getUser();
+  const session = await auth();
 
   const resumes = await prisma.resume.findMany({
-    where: { userId: user?.id },
+    where: { userId: session?.user?.id },
     orderBy: { createdAt: "desc" },
   });
 
@@ -22,7 +20,7 @@ export default async function page() {
       </p>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <AddResume />
-        {resumes.map((resume) => (
+        {resumes.map((resume: Resume) => (
           <ResumeCard key={resume.id} resume={resume as Resume} />
         ))}
       </div>

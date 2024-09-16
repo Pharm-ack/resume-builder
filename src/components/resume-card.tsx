@@ -38,21 +38,6 @@ export default function ResumeCard({ resume }: ResumeCardProps) {
           </Button>
         </CardFooter>
       </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Backend Engineer</CardTitle>
-          <CardDescription>Created on 2023-05-15</CardDescription>
-        </CardHeader>
-        <CardFooter>
-          <Button variant="outline" size="sm">
-            View
-          </Button>
-          <Button variant="outline" size="sm" className="ml-2">
-            Edit
-          </Button>
-        </CardFooter>
-      </Card>
     </>
   );
 }

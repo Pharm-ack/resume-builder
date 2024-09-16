@@ -1,48 +1,130 @@
 "use server";
 
+import { Prisma, Resume } from "@prisma/client";
+import { parseWithZod } from "@conform-to/zod";
+import { LoginSchema, RegisterSchema } from "@/schema";
+import bcrypt from "bcryptjs";
+import { auth, signIn, signOut } from "@/auth";
+import { AuthError } from "next-auth";
 import prisma from "@/lib/db";
 
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { Prisma, Resume } from "@prisma/client";
+type FormState = {
+  status: "success" | "error" | undefined;
+  message: string;
+};
 
-export async function checkAuthStatus() {
-  const { getUser } = getKindeServerSession();
-
-  const user = await getUser();
-
-  if (!user) return { success: false, message: "User not found" };
-
-  const userExists = await prisma.user.findUnique({
-    where: {
-      id: user.id,
-    },
+export async function register(
+  prevState: unknown,
+  formData: FormData,
+): Promise<FormState> {
+  const submission = parseWithZod(formData, {
+    schema: RegisterSchema,
   });
 
-  if (!userExists) {
-    await prisma.user.create({
-      data: {
-        id: user.id,
-        email: user.email!,
-        name: `${user.given_name} ${user.family_name}`,
-        image: user.picture,
-      },
-    });
+  if (submission.status !== "success") {
+    return {
+      status: "error",
+      message: "Validation failed. Please check your inputs.",
+    };
   }
 
-  return { success: true };
+  const { name, email, password } = submission.value;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (user) {
+      return {
+        status: "error",
+        message: "Email already exists",
+      };
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+      },
+    });
+    return {
+      status: "success",
+      message: "User created successfully",
+    };
+  } catch (error) {
+    console.error("Registration error:", error);
+    return {
+      status: "error",
+      message: "Something went wrong",
+    };
+  }
+}
+
+export async function login(
+  prevState: unknown,
+  formData: FormData,
+): Promise<FormState> {
+  const submission = parseWithZod(formData, {
+    schema: LoginSchema,
+  });
+
+  if (submission.status !== "success") {
+    return {
+      status: "error",
+      message: "Validation failed. Please check your inputs.",
+    };
+  }
+
+  const { email, password } = submission.value;
+  try {
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    return {
+      status: "success",
+      message: "User logged in successfully",
+    };
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return {
+            status: "error",
+            message: "Invalid email or password",
+          };
+        default:
+          return {
+            status: "error",
+            message: "Something went wrong",
+          };
+      }
+    }
+    throw error;
+  }
+}
+
+export async function logout() {
+  await signOut();
 }
 
 export async function createResume(title: string) {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+  const session = await auth();
 
   try {
     const resume = await prisma.resume.create({
       data: {
         title: title,
-        userId: user?.id as string,
-        userEmail: user?.email || "",
-        userName: `${user?.given_name} ${user?.family_name}`,
+        userId: session?.user?.id as string,
+        userEmail: session?.user?.email || "",
+        userName: session?.user?.name || "",
         firstName: "",
         lastName: "",
         jobTitle: "",

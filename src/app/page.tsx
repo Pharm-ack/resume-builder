@@ -1,7 +1,13 @@
+import { Footer } from "@/components/footer";
+import Header from "@/components/header";
+import HeroPage from "@/components/hero";
+
 export default function Home() {
   return (
     <main>
-      <h1>Hello worrld</h1>
+      <Header />
+      <HeroPage />
+      <Footer />
     </main>
   );
 }

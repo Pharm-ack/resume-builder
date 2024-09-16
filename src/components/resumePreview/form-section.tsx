@@ -38,11 +38,11 @@ export default function FormSection() {
       case 2:
         return <Summary enabaledNext={setEnabledNext} />;
       case 3:
-        return <Experience enabaledNext={setEnabledNext} />;
+        return <Skills enabaledNext={setEnabledNext} />;
       case 4:
         return <Education enabaledNext={setEnabledNext} />;
       case 5:
-        return <Skills enabaledNext={setEnabledNext} />;
+        return <Experience enabaledNext={setEnabledNext} />;
       default:
         return null;
     }
