@@ -1,9 +1,16 @@
 "use client";
 
 import { useResumeInfo } from "@/contexts/resume-info";
+import { formatDate } from "@/lib/utils";
 
 export default function EducationPreview() {
   const { resumeInfo } = useResumeInfo();
+  const education = resumeInfo?.education[0];
+  const startDate = formatDate(education?.startDate);
+  const endDate = education?.endDate
+    ? formatDate(education.endDate)
+    : "Present";
+
   return (
     <div className="my-6">
       <h2 className="mb-2 text-xl font-bold">Education</h2>
@@ -15,7 +22,7 @@ export default function EducationPreview() {
           <div className="flex items-baseline justify-between">
             <h3 className="text-base font-bold">{education?.institution}</h3>
             <span className="text-sm">
-              {education?.startDate} to {education?.endDate}
+              {startDate} to {endDate}
             </span>
           </div>
 

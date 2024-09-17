@@ -5,6 +5,7 @@ import { TanstackProvider } from "@/providers/tanstack-provider";
 import ResumeInfoProvider from "@/contexts/resume-info";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
+import Anoucements from "@/components/anoucements";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
           <SessionProvider>
             <ResumeInfoProvider>
               <Toaster position="top-right" />
+              <Anoucements />
               {children}
             </ResumeInfoProvider>
           </SessionProvider>

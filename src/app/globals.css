@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+.rsw-ce ul {
+  list-style: disc;
+  padding-left: 2em;
+}
+
+.rsw-ce ol {
+  list-style: decimal;
+  padding-left: 2em;
+}
+ul {
+  list-style-type: disc;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -68,15 +81,6 @@
   }
 }
 
-.rsw-ce ul {
-  list-style: disc;
-  padding-left: 2em;
-}
-
-.rsw-ce ol {
-  list-style: decimal;
-  padding-left: 2em;
-}
 @media print {
   .personal-details {
     background-color: black !important;
