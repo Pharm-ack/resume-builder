@@ -12,6 +12,10 @@ export default auth((req) => {
       return Response.redirect(new URL("/", nextUrl));
     }
   }
+
+  if (nextUrl.pathname.startsWith("/auth") && isLoggedIn) {
+    return Response.redirect(new URL("/", nextUrl));
+  }
 });
 
 export const config = {
